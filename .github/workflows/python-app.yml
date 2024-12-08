@@ -44,8 +44,12 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     defaults:
       run:
+        shell: bash
         working-directory: ./example-app
     needs: build
     steps:
@@ -69,8 +73,12 @@ jobs:
 
   formatter:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     defaults:
       run:
+        shell: bash
         working-directory: ./example-app
     needs: build
     steps:
@@ -93,12 +101,16 @@ jobs:
         poetry run task formatter
 
   secTest:
-      runs-on: ubuntu-latest
-      defaults:
-        run:
-          working-directory: ./example-app
-      needs: build
-      steps:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./example-app
+    needs: build
+    steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.11
         uses: actions/setup-python@v3
@@ -118,12 +130,16 @@ jobs:
           poetry run task security
 
   test: 
-      runs-on: ubuntu-latest
-      defaults:
-        run:
-          working-directory: ./example-app
-      needs: [lint, formatter, secTest]
-      steps:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./example-app
+    needs: [lint, formatter, secTest]
+    steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.11
         uses: actions/setup-python@v3
