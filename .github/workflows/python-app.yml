@@ -14,20 +14,16 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
     defaults:
       run:
         working-directory: ./example-app
-  
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
-  
     - name: Install Poetry Action
       uses: snok/install-poetry@v1.3.4
       
@@ -41,24 +37,20 @@ jobs:
         path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
         key: ${{ runner.os }}-venv
 
-
   lint:
     runs-on: ubuntu-latest
-    
     defaults:
       run:
         working-directory: ./example-app
-  
+    needs: build
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
-  
     - name: Install Poetry Action
       uses: snok/install-poetry@v1.3.4
-
     - name: Recover cached deps
       id: cached-poetry-dependencies
       uses: actions/cache@v3
@@ -72,11 +64,10 @@ jobs:
 
   formatter:
     runs-on: ubuntu-latest
-    
     defaults:
       run:
         working-directory: ./example-app
-  
+    needs: build
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.11
@@ -98,11 +89,10 @@ jobs:
 
   secTest:
       runs-on: ubuntu-latest
-    
       defaults:
         run:
           working-directory: ./example-app
-    
+      needs: build
       steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.11
@@ -124,11 +114,10 @@ jobs:
 
   test: 
       runs-on: ubuntu-latest
-    
       defaults:
         run:
           working-directory: ./example-app
-    
+      needs: [lint, formatter, secTest]
       steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.11
